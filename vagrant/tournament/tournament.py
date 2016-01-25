@@ -86,6 +86,15 @@ def reportMatch(winner, loser):
     pg.commit()
     pg.close()
 
+def assignParings(index, result, step):
+    pairs = []
+    for i in xrange(index, len(result), step):
+        pairs.append((result[i][0], result[i][1], result[i+1][0], result[i+1][1]))
+    return pairs;
+
+
+
+
 def swissPairings():
     """Returns a list of pairs of players for the next round of a match.
 
@@ -100,10 +109,20 @@ def swissPairings():
         name1: the first player's name
         id2: the second player's unique id
         name2: the second player's name
+     In the case of uneven number of players. The player in the first position
+     gets a bye for that round.
+
     """
 
     result = playerStandings()
     pairs = []
-    for i in xrange(0, len(result),2):
-        pairs.append((result[i][0], result[i][1], result[i+1][0], result[i+1][1]))
-    return pairs;
+    if len(result)%2 == 1:
+        pairs = []
+        pairs.append((result[0][0], result[0][1], 'bye'))
+        for i in xrange(1, len(result), 2):
+            pairs.append((result[i][0], result[i][1], result[i+1][0], result[i+1][1]))
+        return pairs
+    else:
+        for i in xrange(0, len(result), 2):
+            pairs.append((result[i][0], result[i][1], result[i+1][0], result[i+1][1]))
+        return pairs
